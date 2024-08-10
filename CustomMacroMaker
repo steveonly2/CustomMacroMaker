@@ -112,21 +112,21 @@ def check_version():
         if latest_version != current_version:
             download_latest_version()
         else:
-            show_message("You are using the latest version.")
+            recorder.show_message("You are using the latest version.")
 
     except requests.RequestException as e:
-        show_message(f"Error checking for updates: {e}")
+        recorder.show_message(f"Error checking for updates: {e}")
 
 def download_latest_version():
-    download_url = "https://raw.githubusercontent.com/suiyang12/CustomMacroMaker/main/latest_version.py"
+    download_url = "https://raw.githubusercontent.com/suiyang12/CustomMacroMaker/main/CustomMacroMaker"
     try:
         response = requests.get(download_url)
         response.raise_for_status()
-        with open("updated_script.py", "wb") as f:
+        with open("CustomMacroMaker.py", "wb") as f:
             f.write(response.content)
-        show_message("Downloaded the latest version.")
+        recorder.show_message("Downloaded the latest version.")
     except requests.RequestException as e:
-        show_message(f"Error downloading the latest version: {e}")
+        recorder.show_message(f"Error downloading the latest version: {e}")
 
 # GUI Setup
 root = tk.Tk()
@@ -136,7 +136,7 @@ root.title("Macro Recorder")
 root.geometry("450x300")
 
 recorder = MacroRecorder()
-current_version = "1.0.0"
+current_version = "1.1.0"  # Incremented the version number
 
 # Create GUI elements
 start_button = tk.Button(root, text="Start Recording (F1)", command=start_recording, width=30)
