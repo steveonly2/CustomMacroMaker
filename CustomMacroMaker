@@ -5,6 +5,7 @@ import time
 import threading
 import os
 import requests
+from tkinter import messagebox
 
 class MacroRecorder:
     def __init__(self):
@@ -110,23 +111,28 @@ def check_version():
         latest_version = response.json().get("version", "0.0.0")
 
         if latest_version != current_version:
-            download_latest_version()
+            ask_to_download(latest_version)
         else:
-            recorder.show_message("You are using the latest version.")
+            show_message("You are using the latest version.")
 
     except requests.RequestException as e:
-        recorder.show_message(f"Error checking for updates: {e}")
+        show_message(f"Error checking for updates: {e}")
 
-def download_latest_version():
+def ask_to_download(latest_version):
+    if messagebox.askyesno("Update Available", "A new version is available. Do you want to download it?"):
+        download_latest_version(latest_version)
+
+def download_latest_version(latest_version):
     download_url = "https://raw.githubusercontent.com/suiyang12/CustomMacroMaker/main/CustomMacroMaker"
     try:
         response = requests.get(download_url)
         response.raise_for_status()
-        with open("CustomMacroMaker.py", "wb") as f:
+        filename = f"CustomMacroMaker({latest_version}).py"
+        with open(filename, "wb") as f:
             f.write(response.content)
-        recorder.show_message("Downloaded the latest version.")
+        show_message(f"Downloaded the latest version as {filename}.")
     except requests.RequestException as e:
-        recorder.show_message(f"Error downloading the latest version: {e}")
+        show_message(f"Error downloading the latest version: {e}")
 
 # GUI Setup
 root = tk.Tk()
@@ -136,7 +142,7 @@ root.title("Macro Recorder")
 root.geometry("450x300")
 
 recorder = MacroRecorder()
-current_version = "1.1.0"  # Incremented the version number
+current_version = "1.0.2"
 
 # Create GUI elements
 start_button = tk.Button(root, text="Start Recording (F1)", command=start_recording, width=30)
@@ -154,7 +160,7 @@ infinite_replay_checkbox.pack(pady=5)
 status_label.pack(pady=10)
 
 # Credits Tab
-credits_button = tk.Button(root, text="Credits", command=lambda: tk.messagebox.showinfo("Credits", "Made by Steve/suiyang12"), width=30)
+credits_button = tk.Button(root, text="Credits", command=lambda: messagebox.showinfo("Credits", "Made by Steve/suiyang12"), width=30)
 credits_button.pack(pady=10)
 
 # Bind hotkeys
